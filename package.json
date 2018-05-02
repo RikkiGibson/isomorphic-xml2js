@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "XML parsing for browser and node.js",
   "main": "dist/lib/index.js",
-  "browser": "./dist/lib/browser.js",
+  "browser": "dist/lib/browser.js",
   "types": "typings/lib/index.js",
   "scripts": {
     "build": "run-p build:nodejs build:browser",

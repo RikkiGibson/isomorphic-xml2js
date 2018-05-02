@@ -4,6 +4,7 @@ import * as path from 'path';
 const config: webpack.Configuration = {
   entry: './lib/browser.ts',
   devtool: 'source-map',
+  mode: "production",
   output: {
     filename: 'xml2jsBundle.js',
     path: __dirname,

@@ -1,0 +1,11 @@
+lib/
+test/
+testserver/
+dist/test/
+typings/test/
+*.js.map
+*.tgz
+.editorconfig
+webpack.*.ts
+tsconfig.json
+.vscode
