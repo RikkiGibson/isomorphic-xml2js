@@ -25,7 +25,7 @@ const config: webpack.Configuration = {
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
-    alias: { "xml2js": path.join(__dirname, "lib/browser.js") }
+    alias: { "../lib/index": path.join(__dirname, "./lib/browser") }
   },
   node: {
     fs: false,

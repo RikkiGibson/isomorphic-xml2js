@@ -1,9 +1,9 @@
 import * as assert from "assert";
-import * as xml2js from "../lib/browser";
+import * as xml2js from "../lib/index";
 
 const parseString = (xml: string) => {
   return new Promise(function(resolve, reject) {
-    xml2js.parseString(xml, function(err: any, result: any) {
+    new xml2js.Parser({ explicitArray: false, explicitCharkey: false,  explicitRoot: false }).parseString(xml, function(err: any, result: any) {
       if (err) {
         reject(err);
       } else {

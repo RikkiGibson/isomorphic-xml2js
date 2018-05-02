@@ -1,3 +1,4 @@
+
 const errorNS = new DOMParser().parseFromString('INVALID', 'text/xml').getElementsByTagName("parsererror")[0].namespaceURI!;
 function getErrorMessage(dom: Document): string | undefined {
   const parserErrors = dom.getElementsByTagNameNS(errorNS, "parsererror");
