@@ -1,6 +1,6 @@
 {
   "name": "isomorphic-xml2js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "XML parsing for browser and node.js",
   "main": "dist/lib/index.js",
   "browser": "dist/lib/browser.js",

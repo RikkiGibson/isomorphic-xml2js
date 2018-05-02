@@ -77,9 +77,7 @@ function domToObject(node: Node): any {
 }
 
 export class Parser {
-  constructor(opts: any) {
-    console.log(opts);
-  }
+  constructor(opts: any) {}
 
   parseString: (xml: string, callback: (err: any, res: any) => void) => void = parseString;
 }
