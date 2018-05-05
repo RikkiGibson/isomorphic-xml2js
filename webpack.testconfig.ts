@@ -3,7 +3,7 @@ import * as glob from 'glob';
 import * as path from 'path';
 
 const config: webpack.Configuration = {
-  entry: glob.sync('./test/*.ts'),
+  entry: [...glob.sync('./test/*.ts'), ...glob.sync('./node-xml2js/test/**/*.coffee')],
   mode: 'development',
   devtool: 'source-map',
   devServer: {
@@ -20,17 +20,25 @@ const config: webpack.Configuration = {
         test: /\.tsx?$/,
         loader: 'ts-loader',
         exclude: /(node_modules)/
+      },
+      {
+        test: /\.coffee$/,
+        loader: 'coffee-loader',
+        exclude: /(node_modules)/
       }
     ]
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
-    alias: { "../lib/index": path.join(__dirname, "./lib/browser") }
+    extensions: [".tsx", ".ts", ".js", ".coffee"],
+    alias: {
+      "../lib/index": path.join(__dirname, "lib/browser"),
+      "../lib/xml2js": path.join(__dirname, "test/xml2js-facade"),
+      "fs": path.join(__dirname, "test/fs-stub.test")
+    }
   },
   node: {
-    fs: false,
     net: false,
-    path: false,
+    path: true,
     dns: false,
     tls: false,
     tty: false,

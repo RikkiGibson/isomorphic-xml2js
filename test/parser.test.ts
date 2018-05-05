@@ -58,4 +58,10 @@ describe("isomorphic xml2js parser", () => {
       assert(!(err instanceof assert.AssertionError), "err should not be AssertionError");
     }
   });
+
+  it("parses a document containing CDATA", async () => {
+    const xml = `<root><![CDATA[&]]></root>`;
+    const obj = await parseString(xml);
+    assert.equal(obj, "&");
+  })
 });
