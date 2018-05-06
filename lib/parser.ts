@@ -1,4 +1,4 @@
-import { OptionsV2, overrideDefaultsWith } from "./options";
+import { OptionsV2, overrideDefaultsWith, defaultAttrkey, defaultCharkey, defaultChildkey } from "./options";
 
 const errorNS = new DOMParser().parseFromString('INVALID', 'text/xml').getElementsByTagName("parsererror")[0].namespaceURI!;
 function getErrorMessage(dom: Document): string | undefined {
@@ -37,6 +37,7 @@ export class Parser {
 
   parseString(xml: string, callback: (err: any, res?: any) => void): void {
     const parser = new DOMParser();
+    let obj;
     try {
       const dom = parser.parseFromString(xml, "application/xml");
       const errorMessage = getErrorMessage(dom);
@@ -44,57 +45,124 @@ export class Parser {
         throw new Error(errorMessage);
       }
 
-      const obj = this.opts.explicitRoot
+      obj = this.opts.explicitRoot
         ? { [dom.documentElement.nodeName]: this.domToObject(dom.childNodes[0]) }
         : this.domToObject(dom.childNodes[0]);
-
-      callback(null, obj);
     } catch (err) {
       callback(err);
+      return;
     }
+
+    callback(null, obj);
   };
+
+  parseAttributes(node: Node): { [key: string]: any } | undefined {
+    if (this.opts.ignoreAttrs || !isElement(node) || !node.hasAttributes()) {
+      return undefined;
+    }
+
+    const attrsObject: { [key: string]: any } = {};
+
+    if (isElement(node) && node.hasAttributes()) {
+      for (let i = 0; i < node.attributes.length; i++) {
+        const attr = node.attributes[i];
+        attrsObject[attr.nodeName] = attr.nodeValue;
+      }
+    }
+
+    return attrsObject;
+  }
 
   domToObject(node: Node): any {
     if (node.childNodes.length === 0 && !(isElement(node) && node.hasAttributes())) {
-      return '';
+      return this.opts.emptyTag;
     }
 
-    let areAllChildrenText = node.childNodes.length >= 1;
-    for (let i = 0; areAllChildrenText && i < node.childNodes.length; i++) {
-      areAllChildrenText = areAllChildrenText &&
-        (node.childNodes[i].nodeType === Node.TEXT_NODE ||
-        node.childNodes[i].nodeType === Node.CDATA_SECTION_NODE);
-    }
+    const attrsObject = this.parseAttributes(node);
+    const childkey = this.opts.childkey || defaultChildkey;
+    const charkey = this.opts.charkey || defaultCharkey;
 
-    if (areAllChildrenText) {
-      let content = '';
-      for (let i = 0; i < node.childNodes.length; i++) {
-        content += node.childNodes[i].nodeValue;
-      }
-      return content;
-    }
-
-    const result: { [key: string]: any } = {};
+    let result: any = {};
+    let allTextContent = '';
     for (let i = 0; i < node.childNodes.length; i++) {
       const child = node.childNodes[i];
-      // Ignore leading/trailing whitespace nodes
-      if (child.nodeType !== Node.TEXT_NODE) {
+      if (child.nodeType === Node.TEXT_NODE || child.nodeType === Node.CDATA_SECTION_NODE) {
+        const nodeValue = child.nodeValue || '';
+        const textContent = this.opts.normalize
+          ? nodeValue.replace(/\n[ ]+\b/g, ' ').trim()
+          : this.opts.trim
+            ? nodeValue.trim()
+            : nodeValue;
+
+        allTextContent += textContent;
+
+        const addTextChild = this.opts.explicitChildren &&
+          this.opts.preserveChildrenOrder &&
+          this.opts.charsAsChildren &&
+          (this.opts.includeWhiteChars || (textContent && textContent.trim()));
+        if (addTextChild) {
+          if (!result[childkey]) {
+            result[childkey] = [];
+          }
+          result[childkey].push({ "#name": "__text__", [charkey]: textContent });
+        }
+      } else {
+        const childObject = this.domToObject(child);
         if (!result[child.nodeName]) {
           result[child.nodeName] = this.opts.explicitArray ? [this.domToObject(child)] : this.domToObject(child);
         } else if (Array.isArray(result[child.nodeName])) {
-          result[child.nodeName].push(this.domToObject(child));
+          result[child.nodeName].push(childObject);
         } else {
           result[child.nodeName] = [result[child.nodeName], this.domToObject(child)];
+        }
+
+        if (this.opts.explicitChildren && this.opts.preserveChildrenOrder) {
+          if (!result[childkey]) {
+            result[childkey] = [];
+          }
+
+          if (typeof childObject === "object") {
+            result[childkey].push({ "#name": child.nodeName, ...childObject });
+          } else {
+            result[childkey].push({ "#name": child.nodeName, [charkey]: childObject });
+          }
         }
       }
     }
 
-    if (isElement(node) && node.hasAttributes()) {
-      result['$'] = {};
+    if (Object.keys(result).length === 0 && !attrsObject && !this.opts.explicitCharkey && !this.opts.charkey) {
+      return allTextContent;
+    }
 
-      for (let i = 0; i < node.attributes.length; i++) {
-        const attr = node.attributes[i];
-        result['$'][attr.nodeName] = attr.nodeValue;
+    // TODO: can this logic be simplified?
+    const includeTextContent = (this.opts.includeWhiteChars && allTextContent) || allTextContent.trim();
+    const useExplicitChildrenObj = (this.opts.explicitChildren || this.opts.childkey) &&
+      !this.opts.preserveChildrenOrder &&
+      (Object.keys(result).length > 0 || (includeTextContent && this.opts.charsAsChildren));
+
+    if (useExplicitChildrenObj) {
+      result = { [childkey]: result };
+    }
+
+    if (includeTextContent) {
+      if (useExplicitChildrenObj && this.opts.charsAsChildren) {
+        result[childkey][charkey] = allTextContent;
+      } else {
+        result[charkey] = allTextContent;
+      }
+    }
+
+    if (attrsObject) {
+      if (this.opts.mergeAttrs) {
+        if (this.opts.explicitArray) {
+          for (const key of Object.keys(attrsObject)) {
+            result[key] = [attrsObject[key]];
+          }
+        } else {
+          Object.assign(result, attrsObject);
+        }
+      } else {
+        result[this.opts.attrkey || defaultAttrkey] = attrsObject;
       }
     }
 
