@@ -51,7 +51,6 @@ equ = assert.strictEqual
 
 module.exports =
   'test parse with defaults': skeleton(undefined, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.chartest[0].$.desc, 'Test for CHARs'
     equ r.sample.chartest[0]._, 'Character data here!'
     equ r.sample.cdatatest[0].$.desc, 'Test for CDATA'
@@ -70,7 +69,6 @@ module.exports =
     equ Object.keys(r.sample.tagcasetest[0]).length, 3)
 
   'test parse with explicitCharkey': skeleton(explicitCharkey: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.chartest[0].$.desc, 'Test for CHARs'
     equ r.sample.chartest[0]._, 'Character data here!'
     equ r.sample.cdatatest[0].$.desc, 'Test for CDATA'
@@ -87,7 +85,6 @@ module.exports =
     equ r.sample.listtest[0].item[2]._, 'Quux.')
 
   'test parse with mergeAttrs': skeleton(mergeAttrs: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.chartest[0].desc[0], 'Test for CHARs'
     equ r.sample.chartest[0]._, 'Character data here!'
     equ r.sample.cdatatest[0].desc[0], 'Test for CDATA'
@@ -105,7 +102,6 @@ module.exports =
     equ r.sample.listtest[0].attr[0], 'Attribute')
 
   'test parse with mergeAttrs and not explicitArray': skeleton(mergeAttrs: true, explicitArray: false, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.chartest.desc, 'Test for CHARs'
     equ r.sample.chartest._, 'Character data here!'
     equ r.sample.cdatatest.desc, 'Test for CDATA'
@@ -123,7 +119,6 @@ module.exports =
     equ r.sample.listtest.attr, 'Attribute')
 
   'test parse with explicitChildren': skeleton(explicitChildren: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.$$.chartest[0].$.desc, 'Test for CHARs'
     equ r.sample.$$.chartest[0]._, 'Character data here!'
     equ r.sample.$$.cdatatest[0].$.desc, 'Test for CDATA'
@@ -143,7 +138,6 @@ module.exports =
     equ Object.keys(r.sample.$$.tagcasetest[0].$$).length, 3)
 
   'test parse with explicitChildren and preserveChildrenOrder': skeleton(explicitChildren: true, preserveChildrenOrder: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.$$[10]['#name'], 'ordertest'
     equ r.sample.$$[10].$$[0]['#name'], 'one'
     equ r.sample.$$[10].$$[0]._, '1'
@@ -159,7 +153,6 @@ module.exports =
     equ r.sample.$$[10].$$[5]._, '6')
 
   'test parse with explicitChildren and charsAsChildren and preserveChildrenOrder': skeleton(explicitChildren: true, preserveChildrenOrder: true, charsAsChildren: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.$$[10]['#name'], 'ordertest'
     equ r.sample.$$[10].$$[0]['#name'], 'one'
     equ r.sample.$$[10].$$[0]._, '1'
@@ -186,7 +179,6 @@ module.exports =
     equ r.sample.$$[17].$$[3]._, ' in the middle')
 
   'test parse with explicitChildren and charsAsChildren and preserveChildrenOrder and includeWhiteChars': skeleton(explicitChildren: true, preserveChildrenOrder: true, charsAsChildren: true, includeWhiteChars: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.$$[35]['#name'], 'textordertest'
     equ r.sample.$$[35].$$[0]['#name'], '__text__'
     equ r.sample.$$[35].$$[0]._, 'this is text with '
@@ -200,7 +192,6 @@ module.exports =
     equ r.sample.$$[35].$$[4]._, ' in the middle')
 
   'test parse with explicitChildren and charsAsChildren and preserveChildrenOrder and includeWhiteChars and normalize': skeleton(explicitChildren: true, preserveChildrenOrder: true, charsAsChildren: true, includeWhiteChars: true, normalize: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     # normalized whitespace-only text node becomes empty string
     equ r.sample.$$[35]['#name'], 'textordertest'
     equ r.sample.$$[35].$$[0]['#name'], '__text__'
@@ -215,11 +206,9 @@ module.exports =
     equ r.sample.$$[35].$$[4]._, 'in the middle')
 
   'test element without children': skeleton(explicitChildren: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.$$.nochildrentest[0].$$, undefined)
 
   'test parse with explicitChildren and charsAsChildren': skeleton(explicitChildren: true, charsAsChildren: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.$$.chartest[0].$$._, 'Character data here!'
     equ r.sample.$$.cdatatest[0].$$._, 'CDATA here!'
     equ r.sample.$$.listtest[0].$$.item[0].$$._, '\n            This  is\n            \n            character\n            \n            data!\n            \n        '
@@ -239,7 +228,6 @@ module.exports =
     equ r.sample.whitespacetest[0]._, '\n        Line One\n        Line Two\n    ')
 
   'test enabled root node elimination': skeleton(__xmlString: '<root></root>', explicitRoot: false, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     assert.deepEqual r, '')
 
   'test disabled root node elimination': skeleton(__xmlString: '<root></root>', explicitRoot: true, (r) ->
@@ -256,13 +244,11 @@ module.exports =
     skeleton(__xmlString: ' ', (r) -> equ r, null)(test)
 
   'test enabled normalizeTags': skeleton(normalizeTags: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ Object.keys(r.sample.tagcasetest).length, 1)
 
   'test parse with custom char and attribute object keys': (test) ->
     test.skip()
     skeleton(attrkey: 'attrobj', charkey: 'charobj', (r) ->
-      console.log 'Result object: ' + util.inspect r, false, 10
       equ r.sample.chartest[0].attrobj.desc, 'Test for CHARs'
       equ r.sample.chartest[0].charobj, 'Character data here!'
       equ r.sample.cdatatest[0].attrobj.desc, 'Test for CDATA'
@@ -273,19 +259,16 @@ module.exports =
       equ r.sample.nochartest[0].attrobj.misc, 'false')(test)
 
   'test child node without explicitArray': skeleton(explicitArray: false, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.arraytest.item[0].subitem, 'Baz.'
     equ r.sample.arraytest.item[1].subitem[0], 'Foo.'
     equ r.sample.arraytest.item[1].subitem[1], 'Bar.')
 
   'test child node with explicitArray': skeleton(explicitArray: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.arraytest[0].item[0].subitem[0], 'Baz.'
     equ r.sample.arraytest[0].item[1].subitem[0], 'Foo.'
     equ r.sample.arraytest[0].item[1].subitem[1], 'Bar.')
 
   'test ignore attributes': skeleton(ignoreAttrs: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.chartest[0], 'Character data here!'
     equ r.sample.cdatatest[0], 'CDATA here!'
     equ r.sample.nochartest[0], ''
@@ -312,7 +295,6 @@ module.exports =
       trim: true
       normalize: true,
       (err, r) ->
-        console.log r
         equ r.sample.whitespacetest[0]._, 'Line One Line Two'
         test.finish()
 
@@ -360,7 +342,6 @@ module.exports =
   'test validator': (test) ->
     test.skip()
     skeleton(validator: validator, (r) ->
-      console.log 'Result object: ' + util.inspect r, false, 10
       equ typeof r.sample.validatortest[0].stringtest[0], 'string'
       equ typeof r.sample.validatortest[0].numbertest[0], 'number'
       assert.ok r.sample.validatortest[0].emptyarray[0].item instanceof Array
@@ -408,7 +389,6 @@ module.exports =
       setTimeout test.finish.bind test
 
   'test xmlns': skeleton(xmlns: true, (r) ->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample["pfx:top"][0].$ns.local, 'top'
     equ r.sample["pfx:top"][0].$ns.uri, 'http://foo.com'
     equ r.sample["pfx:top"][0].$["pfx:attr"].value, 'baz'
@@ -535,47 +515,39 @@ module.exports =
       test.finish()
 
   'test single attrNameProcessors': skeleton(attrNameProcessors: [nameToUpperCase], (r)->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.attrNameProcessTest[0].$.hasOwnProperty('CAMELCASEATTR'), true
     equ r.sample.attrNameProcessTest[0].$.hasOwnProperty('LOWERCASEATTR'), true)
 
   'test multiple attrNameProcessors': skeleton(attrNameProcessors: [nameToUpperCase, nameCutoff], (r)->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.attrNameProcessTest[0].$.hasOwnProperty('CAME'), true
     equ r.sample.attrNameProcessTest[0].$.hasOwnProperty('LOWE'), true)
 
   'test single attrValueProcessors': skeleton(attrValueProcessors: [nameToUpperCase], (r)->
-    console.log 'Result object: ' + util.inspect r, false, 10
+
     equ r.sample.attrValueProcessTest[0].$.camelCaseAttr, 'CAMELCASEATTRVALUE'
     equ r.sample.attrValueProcessTest[0].$.lowerCaseAttr, 'LOWERCASEATTRVALUE')
 
   'test multiple attrValueProcessors': skeleton(attrValueProcessors: [nameToUpperCase, nameCutoff], (r)->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.attrValueProcessTest[0].$.camelCaseAttr, 'CAME'
     equ r.sample.attrValueProcessTest[0].$.lowerCaseAttr, 'LOWE')
 
   'test single valueProcessor': skeleton(valueProcessors: [nameToUpperCase], (r)->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.valueProcessTest[0], 'SOME VALUE')
 
   'test multiple valueProcessor': skeleton(valueProcessors: [nameToUpperCase, nameCutoff], (r)->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.sample.valueProcessTest[0], 'SOME')
 
   'test single tagNameProcessors': skeleton(tagNameProcessors: [nameToUpperCase], (r)->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.hasOwnProperty('SAMPLE'), true
     equ r.SAMPLE.hasOwnProperty('TAGNAMEPROCESSTEST'), true)
 
   'test single tagNameProcessors in simple callback': (test) ->
     data = require('raw-loader!../resources/sample.xml')
     xml2js.parseString data, tagNameProcessors: [nameToUpperCase], (err, r)->
-      console.log 'Result object: ' + util.inspect r, false, 10
       equ r.hasOwnProperty('SAMPLE'), true
       equ r.SAMPLE.hasOwnProperty('TAGNAMEPROCESSTEST'), true
       test.finish()
 
   'test multiple tagNameProcessors': skeleton(tagNameProcessors: [nameToUpperCase, nameCutoff], (r)->
-    console.log 'Result object: ' + util.inspect r, false, 10
     equ r.hasOwnProperty('SAMP'), true
     equ r.SAMP.hasOwnProperty('TAGN'), true)
