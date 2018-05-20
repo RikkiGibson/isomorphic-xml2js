@@ -12,7 +12,7 @@
     "prepare": "npm run build",
     "test": "run-p -r test:server test:chrome-unit",
     "test:server": "ts-node testserver",
-    "test:chrome-unit": "mocha-chrome http://localhost:3004"
+    "test:chrome-unit": "sleep 0.5 && mocha-chrome http://localhost:3004"
   },
   "repository": {
     "type": "git",
