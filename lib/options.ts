@@ -9,6 +9,7 @@ export interface OptionsV2 {
   includeWhiteChars?: boolean;
   trim?: boolean;
   normalize?: boolean;
+  normalizeTags?: boolean;
   xmlns?: boolean;
   attrkey?: string;
   charkey?: string;

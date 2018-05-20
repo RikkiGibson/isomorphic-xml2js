@@ -29,6 +29,10 @@ export class Parser {
     this.opts = overrideDefaultsWith(opts);
   }
 
+  tagName(nodeName: string): string {
+    return this.opts.tagNameProcessors!.reduce((str, fn) => fn(str), this.opts.normalizeTags ? nodeName.toLowerCase() : nodeName);
+  }
+
   parseString(xml: string, callback: (err: any, res?: any) => void): void {
     const parser = new DOMParser();
     let obj;
@@ -37,7 +41,7 @@ export class Parser {
       throwIfError(dom);
 
       if (this.opts.explicitRoot) {
-        const childName = this.opts.tagNameProcessors!.reduce((str, fn) => fn(str), dom.documentElement.nodeName);
+        const childName = this.tagName(dom.documentElement.nodeName);
         obj = { [childName]: this.domToObject(dom.childNodes[0]) };
       } else {
         obj = this.domToObject(dom.childNodes[0]);
@@ -110,7 +114,7 @@ export class Parser {
         }
       } else {
         const childObject = this.domToObject(child);
-        const childName = this.opts.tagNameProcessors!.reduce((str, fn) => fn(str), child.nodeName);
+        const childName = this.tagName(child.nodeName);
         if (!result[childName]) {
           result[childName] = this.opts.explicitArray ? [this.domToObject(child)] : this.domToObject(child);
         } else if (Array.isArray(result[childName])) {
@@ -135,7 +139,7 @@ export class Parser {
 
     if (Object.keys(result).length === 0 && !attrsObject && !this.opts.explicitCharkey && !this.opts.charkey && !this.opts.xmlns) {
       // Consider passing down the processed tag name instead of recomputing it
-      const childName = this.opts.tagNameProcessors!.reduce((str, fn) => fn(str), node.nodeName);
+      const childName = this.tagName(node.nodeName);
       return this.opts.valueProcessors!.reduce((str, fn) => fn(str, childName), allTextContent);
     }
 

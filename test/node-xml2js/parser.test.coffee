@@ -244,7 +244,7 @@ module.exports =
     skeleton(__xmlString: ' ', (r) -> equ r, null)(test)
 
   'test enabled normalizeTags': skeleton(normalizeTags: true, (r) ->
-    equ Object.keys(r.sample.tagcasetest).length, 1)
+    equ Object.keys(r.sample.tagcasetest[0]).length, 1)
 
   'test parse with custom char and attribute object keys': (test) ->
     test.skip()
