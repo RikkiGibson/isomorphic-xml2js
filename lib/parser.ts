@@ -18,11 +18,7 @@ export function parseString(xml: string, options?: any, callback?: (err: any, re
     options = undefined;
   }
 
-  if (typeof callback !== "function") {
-    throw new TypeError("callback must be a function, but got " + callback);
-  }
-
-  new Parser(options).parseString(xml, callback);
+  new Parser(options).parseString(xml, callback!);
 }
 
 function isElement(node: Node): node is Element {
