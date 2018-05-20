@@ -61,12 +61,17 @@ export class Parser {
       return undefined;
     }
 
+    const namespaceKey = (this.opts.attrkey || defaultAttrkey) + "ns";
     const attrsObject: { [key: string]: any } = {};
 
     if (isElement(node) && node.hasAttributes()) {
       for (let i = 0; i < node.attributes.length; i++) {
         const attr = node.attributes[i];
-        attrsObject[attr.nodeName] = attr.nodeValue;
+        if (this.opts.xmlns) {
+          attrsObject[attr.nodeName] = { value: attr.nodeValue, local: attr.localName, uri: attr.namespaceURI };
+        } else {
+          attrsObject[attr.nodeName] = attr.nodeValue;
+        }
       }
     }
 
@@ -99,7 +104,8 @@ export class Parser {
         const addTextChild = this.opts.explicitChildren &&
           this.opts.preserveChildrenOrder &&
           this.opts.charsAsChildren &&
-          (this.opts.includeWhiteChars || (textContent && textContent.trim()));
+          (this.opts.includeWhiteChars || textContent.trim());
+
         if (addTextChild) {
           if (!result[childkey]) {
             result[childkey] = [];
@@ -130,26 +136,30 @@ export class Parser {
       }
     }
 
-    if (Object.keys(result).length === 0 && !attrsObject && !this.opts.explicitCharkey && !this.opts.charkey) {
+    if (Object.keys(result).length === 0 && !attrsObject && !this.opts.explicitCharkey && !this.opts.charkey && !this.opts.xmlns) {
       return allTextContent;
     }
 
     // TODO: can this logic be simplified?
-    const includeTextContent = (this.opts.includeWhiteChars && allTextContent) || allTextContent.trim();
     const useExplicitChildrenObj = (this.opts.explicitChildren || this.opts.childkey) &&
       !this.opts.preserveChildrenOrder &&
-      (Object.keys(result).length > 0 || (includeTextContent && this.opts.charsAsChildren));
+      (Object.keys(result).length > 0 || (allTextContent && this.opts.charsAsChildren));
 
     if (useExplicitChildrenObj) {
       result = { [childkey]: result };
     }
 
-    if (includeTextContent) {
+    if ((allTextContent && this.opts.includeWhiteChars) || allTextContent.trim()) {
       if (useExplicitChildrenObj && this.opts.charsAsChildren) {
         result[childkey][charkey] = allTextContent;
       } else {
         result[charkey] = allTextContent;
       }
+    }
+
+    if (this.opts.xmlns) {
+      const namespaceKey = (this.opts.attrkey || defaultAttrkey) + "ns";
+      result[namespaceKey] = { local: node.localName, uri: node.namespaceURI };
     }
 
     if (attrsObject) {

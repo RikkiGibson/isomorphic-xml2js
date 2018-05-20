@@ -35,13 +35,6 @@ describe("isomorphic xml2js parser", () => {
     assert.deepStrictEqual(result, expected);
   });
 
-  it("ignores leading and trailing whitespace", async () => {
-    const xml = ` <root><foo>123</foo> </root>\n`;
-    const expected = { foo: '123' };
-    const result = await parseString(xml);
-    assert.deepStrictEqual(result, expected);
-  });
-
   it("parses empty elements", async () => {
     const xml = `<root><foo></foo></root>`;
     const expected = { foo: '' };

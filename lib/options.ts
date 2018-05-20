@@ -9,6 +9,7 @@ export interface OptionsV2 {
   includeWhiteChars?: boolean;
   trim?: boolean;
   normalize?: boolean;
+  xmlns?: boolean;
   attrkey?: string;
   charkey?: string;
   childkey?: string;
@@ -40,6 +41,7 @@ const defaultOptions: OptionsV2 = {
   includeWhiteChars: false,
   trim: false,
   normalize: false,
+  xmlns: false,
   emptyTag: '',
   mergeAttrs: false,
   ignoreAttrs: false,
