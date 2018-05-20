@@ -19,7 +19,7 @@ const config: webpack.Configuration = {
       {
         test: /\.tsx?$/,
         loader: 'ts-loader',
-        exclude: /(node_modules|test)/
+        exclude: /(node_modules|test)|(.*\.d\.ts)/
       }
     ]
   },

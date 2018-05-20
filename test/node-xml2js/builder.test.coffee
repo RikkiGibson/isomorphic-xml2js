@@ -1,7 +1,6 @@
 # use zap to run tests, it also detects CoffeeScript files
 xml2js = require '../xml2js-facade'
 assert = require 'assert'
-fs = require 'fs'
 path = require 'path'
 diff = require 'diff'
 
@@ -133,16 +132,16 @@ module.exports =
     test.finish()
 
   'test parser -> builder roundtrip': (test) ->
+    # Pretty close to being correct but has a few minor whitespace issues
     test.skip()
-    fileName = path.join __dirname, '/fixtures/build_sample.xml'
-    fs.readFile fileName, (err, xmlData) ->
-      xmlExpected = xmlData.toString()
-      xml2js.parseString xmlData, {'trim': true}, (err, obj) ->
-        equ err, null
-        builder = new xml2js.Builder({})
-        xmlActual = builder.buildObject obj
-        diffeq xmlExpected, xmlActual
-        test.finish()
+    xmlData = require('raw-loader!../resources/build_sample.xml')
+    xmlExpected = xmlData.toString()
+    xml2js.parseString xmlData, {'trim': true}, (err, obj) ->
+      equ err, null
+      builder = new xml2js.Builder({})
+      xmlActual = builder.buildObject obj
+      diffeq xmlExpected, xmlActual
+      test.finish()
 
   'test building obj with undefined value' : (test) ->
     obj = { node: 'string', anothernode: undefined }

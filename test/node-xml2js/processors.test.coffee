@@ -1,4 +1,4 @@
-processors = require 'xml2js/lib/processors'
+processors = require '../../lib/processors'
 xml2js = require '../xml2js-facade'
 assert = require 'assert'
 equ = assert.equal

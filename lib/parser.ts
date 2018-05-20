@@ -1,12 +1,10 @@
 import { OptionsV2, overrideDefaultsWith, defaultAttrkey, defaultCharkey, defaultChildkey } from "./options";
 
 const errorNS = new DOMParser().parseFromString('INVALID', 'text/xml').getElementsByTagName("parsererror")[0].namespaceURI!;
-function getErrorMessage(dom: Document): string | undefined {
+function throwIfError(dom: Document) {
   const parserErrors = dom.getElementsByTagNameNS(errorNS, "parsererror");
   if (parserErrors.length) {
-    return parserErrors.item(0).innerHTML;
-  } else {
-    return undefined;
+    throw new Error(parserErrors.item(0).innerHTML);
   }
 }
 
@@ -36,14 +34,14 @@ export class Parser {
     let obj;
     try {
       const dom = parser.parseFromString(xml, "application/xml");
-      const errorMessage = getErrorMessage(dom);
-      if (errorMessage) {
-        throw new Error(errorMessage);
-      }
+      throwIfError(dom);
 
-      obj = this.opts.explicitRoot
-        ? { [dom.documentElement.nodeName]: this.domToObject(dom.childNodes[0]) }
-        : this.domToObject(dom.childNodes[0]);
+      if (this.opts.explicitRoot) {
+        const childName = this.opts.tagNameProcessors!.reduce((str, fn) => fn(str), dom.documentElement.nodeName);
+        obj = { [childName]: this.domToObject(dom.childNodes[0]) };
+      } else {
+        obj = this.domToObject(dom.childNodes[0]);
+      }
     } catch (err) {
       callback(err);
       return;
@@ -63,10 +61,12 @@ export class Parser {
     if (isElement(node) && node.hasAttributes()) {
       for (let i = 0; i < node.attributes.length; i++) {
         const attr = node.attributes[i];
+        const attrName = this.opts.attrNameProcessors!.reduce((str, fn) => fn(str), attr.nodeName);
+        const attrValue = this.opts.attrValueProcessors!.reduce((str, fn) => fn(str), attr.nodeValue);
         if (this.opts.xmlns) {
-          attrsObject[attr.nodeName] = { value: attr.nodeValue, local: attr.localName, uri: attr.namespaceURI };
+          attrsObject[attrName] = { value: attrValue, local: attr.localName, uri: attr.namespaceURI };
         } else {
-          attrsObject[attr.nodeName] = attr.nodeValue;
+          attrsObject[attrName] = attrValue;
         }
       }
     }
@@ -110,12 +110,13 @@ export class Parser {
         }
       } else {
         const childObject = this.domToObject(child);
-        if (!result[child.nodeName]) {
-          result[child.nodeName] = this.opts.explicitArray ? [this.domToObject(child)] : this.domToObject(child);
-        } else if (Array.isArray(result[child.nodeName])) {
-          result[child.nodeName].push(childObject);
+        const childName = this.opts.tagNameProcessors!.reduce((str, fn) => fn(str), child.nodeName);
+        if (!result[childName]) {
+          result[childName] = this.opts.explicitArray ? [this.domToObject(child)] : this.domToObject(child);
+        } else if (Array.isArray(result[childName])) {
+          result[childName].push(childObject);
         } else {
-          result[child.nodeName] = [result[child.nodeName], this.domToObject(child)];
+          result[childName] = [result[childName], this.domToObject(child)];
         }
 
         if (this.opts.explicitChildren && this.opts.preserveChildrenOrder) {
@@ -124,16 +125,18 @@ export class Parser {
           }
 
           if (typeof childObject === "object") {
-            result[childkey].push({ "#name": child.nodeName, ...childObject });
+            result[childkey].push({ "#name": childName, ...childObject });
           } else {
-            result[childkey].push({ "#name": child.nodeName, [charkey]: childObject });
+            result[childkey].push({ "#name": childName, [charkey]: childObject });
           }
         }
       }
     }
 
     if (Object.keys(result).length === 0 && !attrsObject && !this.opts.explicitCharkey && !this.opts.charkey && !this.opts.xmlns) {
-      return allTextContent;
+      // Consider passing down the processed tag name instead of recomputing it
+      const childName = this.opts.tagNameProcessors!.reduce((str, fn) => fn(str), node.nodeName);
+      return this.opts.valueProcessors!.reduce((str, fn) => fn(str, childName), allTextContent);
     }
 
     // TODO: can this logic be simplified?

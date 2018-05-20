@@ -19,6 +19,10 @@ export interface OptionsV2 {
   rootName?: string;
   headless?: boolean;
   strict?: true;
+  tagNameProcessors?: ((tagName: any) => any)[];
+  valueProcessors?: ((value: any, tagName: string) => any)[];
+  attrNameProcessors?: ((attrName: any) => any)[];
+  attrValueProcessors?: ((attrValue: any) => any)[];
   xmldec?: {
     version?: string;
     encoding?: string;
@@ -36,6 +40,10 @@ const defaultOptions: OptionsV2 = {
   explicitArray: true,
   emptyTag: '',
   strict: true,
+  tagNameProcessors: [],
+  valueProcessors: [],
+  attrNameProcessors: [],
+  attrValueProcessors: [],
   xmldec: { version: "1.0", encoding: "UTF-8", standalone: true },
   renderOpts: { pretty: true, indent: ' ', newline: '\n' }
 };

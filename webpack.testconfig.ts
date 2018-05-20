@@ -31,9 +31,7 @@ const config: webpack.Configuration = {
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".coffee"],
     alias: {
-      "../lib/index": path.join(__dirname, "lib/browser"),
-      "../lib/xml2js": path.join(__dirname, "test/xml2js-facade"),
-      "fs": path.join(__dirname, "test/fs-stub.test")
+      "../lib/index": path.join(__dirname, "lib/browser")
     }
   },
   node: {

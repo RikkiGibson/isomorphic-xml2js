@@ -1,12 +1,9 @@
 # use zap to run tests, it also detects CoffeeScript files
 xml2js = require '../xml2js-facade'
-fs = require 'fs'
 util = require 'util'
 assert = require 'assert'
 path = require 'path'
 os = require 'os'
-
-fileName = path.join __dirname, '/fixtures/sample.xml'
 
 skeleton = (options, checks) ->
   (test) ->
@@ -17,9 +14,9 @@ skeleton = (options, checks) ->
       checks r
       test.finish()
     if not xmlString
-      fs.readFile fileName, 'utf8', (err, data) ->
-        data = data.split(os.EOL).join('\n')
-        x2js.parseString data
+      data = require('raw-loader!../resources/sample.xml')
+      data = data.split(os.EOL).join('\n')
+      x2js.parseString data
     else
       x2js.parseString xmlString
 
@@ -302,36 +299,34 @@ module.exports =
 
   'test simple callback mode': (test) ->
     x2js = new xml2js.Parser()
-    fs.readFile fileName, (err, data) ->
+    data = require('raw-loader!../resources/sample.xml')
+    x2js.parseString data, (err, r) ->
       equ err, null
-      x2js.parseString data, (err, r) ->
-        equ err, null
-        # just a single test to check whether we parsed anything
-        equ r.sample.chartest[0]._, 'Character data here!'
-        test.finish()
+      # just a single test to check whether we parsed anything
+      equ r.sample.chartest[0]._, 'Character data here!'
+      test.finish()
 
   'test simple callback with options': (test) ->
-    fs.readFile fileName, (err, data) ->
-      xml2js.parseString data,
-        trim: true
-        normalize: true,
-        (err, r) ->
-          console.log r
-          equ r.sample.whitespacetest[0]._, 'Line One Line Two'
-          test.finish()
+    data = require('raw-loader!../resources/sample.xml')
+    xml2js.parseString data,
+      trim: true
+      normalize: true,
+      (err, r) ->
+        console.log r
+        equ r.sample.whitespacetest[0]._, 'Line One Line Two'
+        test.finish()
 
   'test double parse': (test) ->
     x2js = new xml2js.Parser()
-    fs.readFile fileName, (err, data) ->
+    data = require('raw-loader!../resources/sample.xml')
+    x2js.parseString data, (err, r) ->
       equ err, null
+      # make sure we parsed anything
+      equ r.sample.chartest[0]._, 'Character data here!'
       x2js.parseString data, (err, r) ->
         equ err, null
-        # make sure we parsed anything
         equ r.sample.chartest[0]._, 'Character data here!'
-        x2js.parseString data, (err, r) ->
-          equ err, null
-          equ r.sample.chartest[0]._, 'Character data here!'
-          test.finish()
+        test.finish()
 
   'test element with garbage XML': (test) ->
     x2js = new xml2js.Parser()
@@ -341,26 +336,26 @@ module.exports =
       test.finish()
 
   'test simple function without options': (test) ->
-    fs.readFile fileName, (err, data) ->
-      xml2js.parseString data, (err, r) ->
-        equ err, null
-        equ r.sample.chartest[0]._, 'Character data here!'
-        test.finish()
+    data = require('raw-loader!../resources/sample.xml')
+    xml2js.parseString data, (err, r) ->
+      equ err, null
+      equ r.sample.chartest[0]._, 'Character data here!'
+      test.finish()
 
   'test simple function with options': (test) ->
-    fs.readFile fileName, (err, data) ->
-      # well, {} still counts as option, right?
-      xml2js.parseString data, {}, (err, r) ->
-        equ err, null
-        equ r.sample.chartest[0]._, 'Character data here!'
-        test.finish()
+    data = require('raw-loader!../resources/sample.xml')
+    # well, {} still counts as option, right?
+    xml2js.parseString data, {}, (err, r) ->
+      equ err, null
+      equ r.sample.chartest[0]._, 'Character data here!'
+      test.finish()
 
   'test async execution': (test) ->
-    fs.readFile fileName, (err, data) ->
-      xml2js.parseString data, async: true, (err, r) ->
-        equ err, null
-        equ r.sample.chartest[0]._, 'Character data here!'
-        test.finish()
+    data = require('raw-loader!../resources/sample.xml')
+    xml2js.parseString data, async: true, (err, r) ->
+      equ err, null
+      equ r.sample.chartest[0]._, 'Character data here!'
+      test.finish()
 
   'test validator': (test) ->
     test.skip()
@@ -573,12 +568,12 @@ module.exports =
     equ r.SAMPLE.hasOwnProperty('TAGNAMEPROCESSTEST'), true)
 
   'test single tagNameProcessors in simple callback': (test) ->
-    fs.readFile fileName, (err, data) ->
-      xml2js.parseString data, tagNameProcessors: [nameToUpperCase], (err, r)->
-        console.log 'Result object: ' + util.inspect r, false, 10
-        equ r.hasOwnProperty('SAMPLE'), true
-        equ r.SAMPLE.hasOwnProperty('TAGNAMEPROCESSTEST'), true
-        test.finish()
+    data = require('raw-loader!../resources/sample.xml')
+    xml2js.parseString data, tagNameProcessors: [nameToUpperCase], (err, r)->
+      console.log 'Result object: ' + util.inspect r, false, 10
+      equ r.hasOwnProperty('SAMPLE'), true
+      equ r.SAMPLE.hasOwnProperty('TAGNAMEPROCESSTEST'), true
+      test.finish()
 
   'test multiple tagNameProcessors': skeleton(tagNameProcessors: [nameToUpperCase, nameCutoff], (r)->
     console.log 'Result object: ' + util.inspect r, false, 10
