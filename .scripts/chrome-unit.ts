@@ -8,7 +8,11 @@ const webpackDevServerHandler = async (data: Buffer) => {
   if (!mochaChromeRunning) {
     mochaChromeRunning = true
     const mochaChrome = spawn(join(__dirname, "../node_modules/.bin/mocha-chrome"), ["http://localhost:3004"], { shell: true, stdio: "inherit" });
-    mochaChrome.on("exit", () => webpackDevServer.kill());
+    mochaChrome.on("exit", () => {
+      webpackDevServer.stderr.destroy();
+      webpackDevServer.stdout.destroy();
+      webpackDevServer.kill();
+    });
   }
 }
 
