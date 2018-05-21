@@ -10,9 +10,7 @@
     "build:nodejs": "tsc",
     "build:browser": "webpack",
     "prepare": "npm run build",
-    "test": "run-p -r test:server test:chrome-unit",
-    "test:server": "ts-node testserver",
-    "test:chrome-unit": "sleep 2 && mocha-chrome http://localhost:3004"
+    "test": "ts-node .scripts/chrome-unit"
   },
   "repository": {
     "type": "git",
