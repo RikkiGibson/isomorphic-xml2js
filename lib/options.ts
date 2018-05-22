@@ -52,7 +52,6 @@ export function overrideDefaultsWith(userOptions?: OptionsV2): OptionsV2 {
   // Ideally we would just use some generic deep merge thing here but don't want to pull in dependencies
   return {
     ...defaultOptions, ...userOptions,
-    xmldec: { ...defaultOptions.xmldec, ...(userOptions && userOptions.xmldec) },
-    renderOpts: { ...defaultOptions.renderOpts, ...(userOptions && userOptions.renderOpts) }
+    xmldec: { ...defaultOptions.xmldec, ...(userOptions && userOptions.xmldec) }
   };
 }
