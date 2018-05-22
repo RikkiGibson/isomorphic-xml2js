@@ -14,8 +14,8 @@ Note that the JavaScript in this library is targeting ES2017. If you want to tar
 
 - `strict: false` has no effect. Parsing malformed XML documents is unsupported.
 - `async: true` has no effect. Parsing is always synchronous, even though the API is callback-based to match node-xml2js.
-- `options.renderOpts.pretty` doesn't work in Internet Explorer due to missing [XSLTProcessor](https://developer.mozilla.org/en-US/docs/Web/API/XSLTProcessor).
-- `options.renderOpts.indent` has no effect due to XSLTProcessor not supporting a user-defined indent depth when pretty printing.
+- `options.renderOpts` is ignored and XML documents are not pretty printed.
+  - XSLTProcessor's `<xslt:output indent="yes" />` attribute is [not supported in Firefox](https://developer.mozilla.org/en-US/docs/Web/XSLT/output), Edge or IE and so doesn't seem portable enough to be worth it. Non-built-in methods of pretty printing XML may be too much of an increase in bundle size for a feature that's usually only useful at development time.
 - `validator` is not implemented.
 - CDATA can be parsed but it is converted to character entities when building.
 - Whitespace-only CDATA is not preserved when the default `includeWhiteChars: false` is specified, even though such CDATA is preserved in node-xml2js.

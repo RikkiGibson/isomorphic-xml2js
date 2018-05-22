@@ -3,14 +3,6 @@ import { OptionsV2, overrideDefaultsWith, defaultAttrkey, defaultCharkey, defaul
 const doc = document.implementation.createDocument(null, null, null);
 const serializer = new XMLSerializer();
 
-
-const xsltStylesheet = new DOMParser().parseFromString(`<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><xsl:output omit-xml-declaration="yes" indent="yes"/><xsl:template match="node()|@*"><xsl:copy><xsl:apply-templates select="node()|@*"/></xsl:copy></xsl:template></xsl:stylesheet>`, "application/xml");
-const xsltProcessor: XSLTProcessor | undefined = XSLTProcessor && new XSLTProcessor();
-if (xsltProcessor) {
-  xsltProcessor.importStylesheet(xsltStylesheet);
-}
-
-
 export class Builder {
   private readonly opts: OptionsV2;
   constructor(opts?: OptionsV2) {
@@ -102,23 +94,11 @@ export class Builder {
       dom = this.buildNode(obj, { elementName: rootName })[0];
     }
 
-    if (this.opts.renderOpts!.pretty && xsltProcessor) {
-      dom = xsltProcessor.transformToDocument(dom);
-      // TODO: firefox inserts a weird wrapper element when prettifying--let's get rid of it
-      // if (dom.childNodes[0].namespaceURI === "http://www.mozilla.org/TransforMiix" && dom.childNodes[0].nodeName === "transformiix:result") {
-      //   dom = dom.childNodes[0];
-      // }
-    }
-
     let xmlString = serializer.serializeToString(dom);
 
     const xmldec = this.opts.xmldec;
     if (xmldec && !this.opts.headless) {
       let declaration = `<?xml version="${xmldec.version}" encoding="${xmldec.encoding}" standalone="${xmldec.standalone ? "yes" : "no"}"?>`;
-      if (this.opts.renderOpts!.pretty) {
-        declaration += this.opts.renderOpts!.newline;
-      }
-
       xmlString = declaration + xmlString;
     }
 

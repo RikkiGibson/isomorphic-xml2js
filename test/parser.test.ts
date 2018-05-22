@@ -1,6 +1,10 @@
 import * as assert from "assert";
 import * as xml2js from "../lib/index";
 
+if (typeof Promise !== "function") {
+  require("es6-promise").polyfill();
+}
+
 const parseString = (xml: string, opts?: any) => {
   return new Promise(function(resolve, reject) {
     new xml2js.Parser(opts || { explicitArray: false, explicitCharkey: false,  explicitRoot: false }).parseString(xml, function(err: any, result: any) {

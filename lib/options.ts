@@ -29,11 +29,7 @@ export interface OptionsV2 {
     encoding?: string;
     standalone?: boolean;
   };
-  renderOpts?: {
-    pretty?: boolean;
-    indent?: string;
-    newline?: string;
-  };
+  renderOpts?: any;
 }
 
 const defaultOptions: OptionsV2 = {
@@ -45,8 +41,7 @@ const defaultOptions: OptionsV2 = {
   valueProcessors: [],
   attrNameProcessors: [],
   attrValueProcessors: [],
-  xmldec: { version: "1.0", encoding: "UTF-8", standalone: true },
-  renderOpts: { pretty: true, indent: ' ', newline: '\n' }
+  xmldec: { version: "1.0", encoding: "UTF-8", standalone: true }
 };
 
 export const defaultCharkey = "_";
@@ -57,7 +52,6 @@ export function overrideDefaultsWith(userOptions?: OptionsV2): OptionsV2 {
   // Ideally we would just use some generic deep merge thing here but don't want to pull in dependencies
   return {
     ...defaultOptions, ...userOptions,
-    xmldec: { ...defaultOptions.xmldec, ...(userOptions && userOptions.xmldec) },
-    renderOpts: { ...defaultOptions.renderOpts, ...(userOptions && userOptions.renderOpts) }
+    xmldec: { ...defaultOptions.xmldec, ...(userOptions && userOptions.xmldec) }
   };
 }

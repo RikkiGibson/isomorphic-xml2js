@@ -4,3 +4,4 @@ typings/
 *.js
 *.js.map
 *.tgz
+package-lock.json
