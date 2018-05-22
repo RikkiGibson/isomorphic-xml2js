@@ -21,7 +21,8 @@ module.exports =
     obj = {"xml":{"Label":[""],"MsgId":["5850440872586764820"]}}
     builder = new xml2js.Builder renderOpts: pretty: false
     actual = builder.buildObject obj
-    diffeq expected, actual
+    # Filter out meaningless whitespace character in self-closing tags
+    diffeq expected, actual.replace(" />", "/>")
     test.finish()
 
   'test setting XML declaration': (test) ->
@@ -31,7 +32,7 @@ module.exports =
       xmldec: 'version': '1.2', 'encoding': 'WTF-8', 'standalone': false
     builder = new xml2js.Builder opts
     actual = builder.buildObject {}
-    diffeq expected, actual
+    diffeq expected, actual.replace(" />", "/>")
     test.finish()
 
   'test pretty by default': (test) ->
@@ -138,7 +139,7 @@ module.exports =
     builder = new xml2js.Builder renderOpts: { pretty: false }
     actual = builder.buildObject(obj);
     expected = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><root><node>string</node><anothernode/></root>'
-    equ actual, expected
+    equ actual.replace(" />", "/>"), expected
     test.finish();
 
   'test building obj with null value' : (test) ->
@@ -146,7 +147,7 @@ module.exports =
     builder = new xml2js.Builder renderOpts: { pretty: false }
     actual = builder.buildObject(obj);
     expected = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><root><node>string</node><anothernode/></root>'
-    equ actual, expected
+    equ actual.replace(" />", "/>"), expected
     test.finish();
 
   'test escapes escaped characters': (test) ->
