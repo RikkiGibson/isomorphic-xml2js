@@ -3,9 +3,12 @@ test/
 testserver/
 dist/test/
 typings/test/
+testBundle*
 *.js.map
 *.tgz
 .editorconfig
 webpack.*.ts
-tsconfig.json
+tsconfig*.json
 .vscode
+.scripts
+.travis.yml
