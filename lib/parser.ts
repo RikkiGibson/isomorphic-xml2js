@@ -1,10 +1,18 @@
 import { OptionsV2, overrideDefaultsWith, defaultAttrkey, defaultCharkey, defaultChildkey } from "./options";
 
-const errorNS = new DOMParser().parseFromString('INVALID', 'text/xml').getElementsByTagName("parsererror")[0].namespaceURI!;
+let errorNS: string;
+try {
+  errorNS = new DOMParser().parseFromString('INVALID', 'text/xml').getElementsByTagName("parsererror")[0].namespaceURI!;
+} catch (ignored) {
+  // Most browsers will return a document containing <parsererror>, but IE will throw.
+}
+
 function throwIfError(dom: Document) {
-  const parserErrors = dom.getElementsByTagNameNS(errorNS, "parsererror");
-  if (parserErrors.length) {
-    throw new Error(parserErrors.item(0).innerHTML);
+  if (errorNS) {
+    const parserErrors = dom.getElementsByTagNameNS(errorNS, "parsererror");
+    if (parserErrors.length) {
+      throw new Error(parserErrors.item(0).innerHTML);
+    }
   }
 }
 
@@ -172,7 +180,7 @@ export class Parser {
             result[key] = [attrsObject[key]];
           }
         } else {
-          Object.assign(result, attrsObject);
+          result = { ...result, ...attrsObject };
         }
       } else {
         result[this.opts.attrkey || defaultAttrkey] = attrsObject;
