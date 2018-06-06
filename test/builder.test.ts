@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import * as xml2js from "../lib/index";
+import * as xml2js from "../lib/browser";
 
 describe("isomorphic xml2js builder", () => {
   it("builds a simple document", async () => {

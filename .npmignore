@@ -7,7 +7,7 @@ testBundle*
 *.js.map
 *.tgz
 .editorconfig
-webpack.*.ts
+webpack.*.js
 tsconfig*.json
 .vscode
 .scripts

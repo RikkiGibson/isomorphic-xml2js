@@ -30,10 +30,7 @@ const config = {
     ]
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js", ".coffee"],
-    alias: {
-      "../lib/index": path.join(__dirname, "lib/browser")
-    }
+    extensions: [".tsx", ".ts", ".js", ".coffee"]
   },
   node: {
     net: false,

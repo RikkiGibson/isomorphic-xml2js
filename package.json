@@ -2,7 +2,7 @@
   "name": "isomorphic-xml2js",
   "version": "0.1.2",
   "description": "XML parsing for browser and node.js",
-  "main": "dist/lib/index.js",
+  "main": "index.js",
   "browser": "dist/lib/browser.js",
   "types": "typings/lib/index.js",
   "scripts": {

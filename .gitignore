@@ -6,3 +6,4 @@ typings/
 *.tgz
 package-lock.json
 !webpack.*.js
+!index.js
