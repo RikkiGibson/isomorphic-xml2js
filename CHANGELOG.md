@@ -1,3 +1,6 @@
+### 0.1.3 2018-06-06
+- Target ES5 in order to support create-react-app
+
 ### 0.1.2 2018-05-22
 - Minor fixes to type definitions
 - Removed unnecessary files from npm package

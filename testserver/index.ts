@@ -1,8 +1,8 @@
 import * as path from "path";
-import * as webpackMiddleware from "webpack-dev-middleware";
-import webpack = require("webpack");
 import express = require("express");
-import testconfig = require("../webpack.testconfig");
+const webpack = require("webpack");
+const webpackMiddleware = require("webpack-dev-middleware");
+const testconfig = require("../webpack.testconfig");
 
 const port = parseInt(process.env.PORT!) || 3004;
 const app = express();

@@ -8,8 +8,6 @@ A drop-in replacement for [xml2js](https://www.npmjs.com/package/xml2js) that us
 
 The goal is to support as much of the xml2js API as reasonably possible. Some features may be dropped if they are found to be unreasonably difficult to implement or if they excessively increase the bundle size or reduce performance.
 
-Note that the JavaScript in this library is targeting ES2017. If you want to target an earlier ES version when bundling, make sure you use something like [babel](https://github.com/babel/babel) in your bundler.
-
 ## Limitations
 
 - `strict: false` has no effect. Parsing malformed XML documents is unsupported.

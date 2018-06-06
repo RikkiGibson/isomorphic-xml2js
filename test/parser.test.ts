@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import * as xml2js from "../lib/index";
+import * as xml2js from "../lib/browser";
 
 if (typeof Promise !== "function") {
   require("es6-promise").polyfill();

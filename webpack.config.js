@@ -1,7 +1,7 @@
-import * as webpack from 'webpack';
-import * as path from 'path';
+const webpack = require('webpack');
+const path = require('path');
 
-const config: webpack.Configuration = {
+const config = {
   entry: './lib/browser.ts',
   devtool: 'source-map',
   mode: "production",
@@ -19,7 +19,8 @@ const config: webpack.Configuration = {
       {
         test: /\.tsx?$/,
         loader: 'ts-loader',
-        exclude: /(node_modules|test)/
+        exclude: /(node_modules|test)/,
+        options: { configFile: path.join(__dirname, './tsconfig.es5.json') }
       }
     ]
   },
@@ -38,4 +39,4 @@ const config: webpack.Configuration = {
   }
 };
 
-export default config;
+module.exports = config;
