@@ -1,7 +1,5 @@
 {
     "compilerOptions": {
-        // This file gets used with webpack.config.ts so we need
-        // a separate tsconfig to use the "module": "es6" option.
         "module": "commonjs",
         "target": "es2017",
         "sourceMap": true,

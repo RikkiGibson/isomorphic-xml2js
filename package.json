@@ -31,8 +31,6 @@
     "@types/glob": "^5.0.35",
     "@types/mocha": "^5.2.0",
     "@types/node": "^10.0.2",
-    "@types/webpack": "^4.1.4",
-    "@types/webpack-dev-middleware": "^2.0.1",
     "coffee-loader": "^0.9.0",
     "coffeescript": "^2.3.0",
     "diff": "^3.5.0",

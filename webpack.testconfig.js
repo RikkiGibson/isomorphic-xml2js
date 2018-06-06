@@ -1,8 +1,8 @@
-import * as webpack from 'webpack';
-import * as glob from 'glob';
-import * as path from 'path';
+const webpack = require('webpack');
+const glob = require("glob");
+const path = require('path');
 
-const config: webpack.Configuration = {
+const config = {
   entry: [...glob.sync('./test/*.ts'), ...glob.sync('./node-xml2js/test/**/*.coffee')],
   mode: 'development',
   devtool: 'source-map',
@@ -46,4 +46,4 @@ const config: webpack.Configuration = {
   }
 };
 
-export = config;
+module.exports = config;

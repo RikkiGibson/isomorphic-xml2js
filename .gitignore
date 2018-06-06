@@ -5,3 +5,4 @@ typings/
 *.js.map
 *.tgz
 package-lock.json
+!webpack.*.js

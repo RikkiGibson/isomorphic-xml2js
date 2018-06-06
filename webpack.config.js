@@ -1,7 +1,7 @@
-import * as webpack from 'webpack';
-import * as path from 'path';
+const webpack = require('webpack');
+const path = require('path');
 
-const config: webpack.Configuration = {
+const config = {
   entry: './lib/browser.ts',
   devtool: 'source-map',
   mode: "production",
@@ -39,4 +39,4 @@ const config: webpack.Configuration = {
   }
 };
 
-export default config;
+module.exports = config;
